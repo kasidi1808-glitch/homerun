@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "bash -lc 'if [ -f frontend/package-lock.json ]; then cd frontend && npm ci --include=dev; else cd frontend && npm install; fi'",
-  "buildCommand": "cd frontend && npm run build",
+  "installCommand": "bash scripts/infra/vercel-frontend-deploy.sh",
+  "buildCommand": "echo \"Build completed in install step\"",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
