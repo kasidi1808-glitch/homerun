@@ -187,6 +187,17 @@ docker compose up -d
 
 Pulls pre-built images from GHCR (`ghcr.io/braedonsaunders/homerun-backend` and `-frontend`). Add `--build` to build locally instead. The stack runs Postgres, Redis, the API, three worker planes, and the frontend behind nginx — Alembic migrations are applied automatically on first start. See [docker-compose.yml](./docker-compose.yml) and [.env.example](./.env.example) for details.
 
+### Deploy frontend on Vercel
+
+If you want the React frontend hosted on Vercel:
+
+```bash
+# from repo root
+vercel
+```
+
+This repository includes a root `vercel.json` that tells Vercel to build from `frontend/` (`npm ci && npm run build`) and publish `frontend/dist`. Because the frontend calls relative `/api` routes, configure a Vercel rewrite so `/api/:path*` proxies to your backend origin (Project Settings → Rewrites), then redeploy.
+
 ### Prerequisites
 
 - Python 3.10+ (auto-installed if missing)
