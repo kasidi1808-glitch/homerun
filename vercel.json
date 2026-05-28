@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "bash ./scripts/infra/vercel-frontend-deploy.sh || bash ../scripts/infra/vercel-frontend-deploy.sh",
-  "buildCommand": "echo \"Build completed in install step\"",
+  "installCommand": "bash ./scripts/infra/vercel-frontend-deploy.sh install || bash ../scripts/infra/vercel-frontend-deploy.sh install",
+  "buildCommand": "bash ./scripts/infra/vercel-frontend-deploy.sh build || bash ../scripts/infra/vercel-frontend-deploy.sh build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {

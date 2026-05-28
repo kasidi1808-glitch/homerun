@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+STEP="${1:-all}"
+
 # Supports two Vercel root-directory modes:
 # 1) repo root (contains ./frontend)
 # 2) frontend root (contains ./package.json)
@@ -14,14 +16,34 @@ else
 fi
 
 cd "$APP_DIR"
-
 echo "Using app directory: $(pwd)"
 
-if [[ -f package-lock.json ]]; then
-  npm ci --include=dev
-else
-  echo "package-lock.json missing; running npm install to regenerate lockfile" >&2
-  npm install --include=dev
-fi
+install_deps() {
+  if [[ -f package-lock.json ]]; then
+    npm ci --include=dev
+  else
+    echo "package-lock.json missing; running npm install to regenerate lockfile" >&2
+    npm install --include=dev
+  fi
+}
 
-npm run build
+build_app() {
+  npm run build
+}
+
+case "$STEP" in
+  install)
+    install_deps
+    ;;
+  build)
+    build_app
+    ;;
+  all)
+    install_deps
+    build_app
+    ;;
+  *)
+    echo "Unknown step: $STEP (expected: install|build|all)" >&2
+    exit 2
+    ;;
+esac

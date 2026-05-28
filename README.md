@@ -205,6 +205,8 @@ The deploy script now supports both layouts:
 - repo root containing `frontend/`
 - frontend as the current root directory
 
+The Vercel config runs install and build as separate steps, so build output appears under Vercel's **Build Logs** instead of being hidden inside install logs.
+
 Lockfile policy:
 - If `package-lock.json` exists, script uses `npm ci --include=dev` (deterministic).
 - If missing, script uses `npm install --include=dev` to regenerate lockfile, then future deploys should use `npm ci`.
