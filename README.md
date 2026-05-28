@@ -189,14 +189,22 @@ Pulls pre-built images from GHCR (`ghcr.io/braedonsaunders/homerun-backend` and 
 
 ### Deploy frontend on Vercel
 
-If you want the React frontend hosted on Vercel:
+If you want the React frontend hosted on Vercel and want deployment cards to appear directly in GitHub PRs ("View deployment" + Vercel bot status table):
+
+1. Import this repo into Vercel (Add New → Project).
+2. In Vercel, connect the GitHub repository and enable Preview deployments for pull requests.
+3. Install/authorize the **Vercel for GitHub** app for the repo/org so Vercel can post PR comments and statuses.
+4. Keep the root `vercel.json` from this repo (it builds `frontend/` via `npm ci && npm run build` and publishes `frontend/dist`).
+5. Add a rewrite in Project Settings → Rewrites so `/api/:path*` proxies to your backend origin.
+
+Then every PR update should trigger a Preview deployment and show Vercel’s PR checks/comments with a **View deployment** link.
+
+You can also trigger the first deploy manually:
 
 ```bash
 # from repo root
 vercel
 ```
-
-This repository includes a root `vercel.json` that tells Vercel to build from `frontend/` (`npm ci && npm run build`) and publish `frontend/dist`. Because the frontend calls relative `/api` routes, configure a Vercel rewrite so `/api/:path*` proxies to your backend origin (Project Settings → Rewrites), then redeploy.
 
 ### Prerequisites
 
