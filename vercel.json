@@ -3,7 +3,7 @@
   "framework": null,
   "installCommand": "echo \"install handled in build step\"",
   "buildCommand": "bash ./scripts/infra/vercel-frontend-deploy.sh || bash ../scripts/infra/vercel-frontend-deploy.sh",
-  "outputDirectory": "frontend/dist",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/:path*",

@@ -8,6 +8,7 @@ ls -la
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+START_DIR="$(pwd)"
 
 # Run from repo root so paths are stable.
 cd "$REPO_ROOT"
@@ -15,7 +16,6 @@ cd "$REPO_ROOT"
 echo "[deploy] repo root: $(pwd)"
 ls -la
 
-# Validate required tools exist in Vercel environment.
 command -v bash
 command -v node
 command -v npm
@@ -38,3 +38,16 @@ else
 fi
 
 npm run build
+
+# Normalize output directory for both Vercel root modes.
+# - If root is repo: expose ./dist at repo root.
+# - If root is frontend: frontend/dist already maps to ./dist.
+cd "$REPO_ROOT"
+rm -rf dist
+cp -R frontend/dist dist
+
+echo "[deploy] normalized output directory: $REPO_ROOT/dist"
+ls -la dist
+
+# Optional visibility when started from a non-root CWD.
+cd "$START_DIR"
