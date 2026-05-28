@@ -194,12 +194,14 @@ If you want the React frontend hosted on Vercel and want deployment cards to app
 1. Import this repo into Vercel (Add New → Project).
 2. In Vercel, connect the GitHub repository and enable Preview deployments for pull requests.
 3. Install/authorize the **Vercel for GitHub** app for the repo/org so Vercel can post PR comments and statuses.
-4. Keep the root `vercel.json` from this repo (it installs frontend deps with devDependencies, builds via `npm run build --prefix frontend`, and publishes `frontend/dist`).
+4. Keep the root `vercel.json` from this repo (it installs from `frontend/package-lock.json` when present, falls back to `npm install` if your Vercel root directory is mis-set, then builds `frontend` and publishes `frontend/dist`).
 5. In `vercel.json`, replace `https://YOUR_BACKEND_HOST` in the `/api/:path*` rewrite with your real backend origin.
 
 Then every PR update should trigger a Preview deployment and show Vercel’s PR checks/comments with a **View deployment** link.
 
 If you still see `Command "cd frontend && npm ci && npm run build" exited with 1`, remove any old Build Command override in Vercel Project Settings so Vercel uses this repository's `vercel.json` commands.
+
+If you see `npm ci` EUSAGE errors about a missing lockfile, your Vercel Root Directory is usually set incorrectly. Set the Vercel project Root Directory to the repository root (not `frontend/`) so `frontend/package-lock.json` is visible to the configured install command.
 
 You can also trigger the first deploy manually:
 
