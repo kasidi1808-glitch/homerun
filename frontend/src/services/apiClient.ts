@@ -1,8 +1,9 @@
 import axios from 'axios'
+import { API_BASE_URL } from '../lib/runtimeEndpoints'
 import { normalizeUtcTimestampsInPlace } from '../lib/timestamps'
 
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   timeout: 60000,
 })
 
