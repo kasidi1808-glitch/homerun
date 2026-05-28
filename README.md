@@ -193,12 +193,22 @@ If you want the React frontend hosted on Vercel and want deployment cards to app
 
 1. Import this repo into Vercel (Add New → Project).
 2. Set **Root Directory** to `frontend`.
-3. Set **Build Command** to `npm install && npm run build`.
-4. Set **Output Directory** to `dist`.
-5. In Vercel Project Settings → Rewrites, proxy `/api/:path*` to your backend origin.
-6. Install/authorize the **Vercel for GitHub** app so PR preview comments/checks are posted.
+3. Set **Install Command** to `npm install`.
+4. Set **Build Command** to `npm run build`.
+5. Set **Output Directory** to `dist`.
+6. In Vercel Project Settings → Rewrites, proxy `/api/:path*` to your backend origin.
+7. Install/authorize the **Vercel for GitHub** app so PR preview comments/checks are posted.
 
-This avoids repo-root path issues (`cd frontend` / script-path mismatches) because Vercel runs directly inside the frontend project.
+Expected project layout:
+
+```text
+root/
+├── frontend/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── src/
+└── backend/
+```
 
 You can also trigger the first deploy manually:
 
