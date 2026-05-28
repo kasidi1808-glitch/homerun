@@ -2,52 +2,33 @@
 set -euo pipefail
 set -x
 
-echo "[deploy] starting vercel frontend deploy script"
+echo "[deploy] start"
 pwd
 ls -la
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-START_DIR="$(pwd)"
-
-# Run from repo root so paths are stable.
-cd "$REPO_ROOT"
-
-echo "[deploy] repo root: $(pwd)"
-ls -la
-
-command -v bash
-command -v node
-command -v npm
-
-if [ ! -d frontend ]; then
-  echo "[deploy] frontend folder not found at $REPO_ROOT/frontend" >&2
+# Detect app directory from common Vercel root-directory modes:
+# - repo root      => ./frontend/package.json
+# - frontend root  => ./package.json + ./src
+# - backend root   => ../frontend/package.json
+if [[ -f package.json && -d src ]]; then
+  APP_DIR="."
+elif [[ -f frontend/package.json ]]; then
+  APP_DIR="frontend"
+elif [[ -f ../frontend/package.json ]]; then
+  APP_DIR="../frontend"
+else
+  echo "[deploy] Could not locate frontend package.json from $(pwd)" >&2
   exit 1
 fi
 
-cd frontend
-
-echo "[deploy] frontend dir: $(pwd)"
+cd "$APP_DIR"
+echo "[deploy] app dir: $(pwd)"
 ls -la
 
-if [ -f package-lock.json ]; then
+if [[ -f package-lock.json ]]; then
   npm ci --include=dev
 else
-  echo "[deploy] package-lock.json missing; using npm install fallback" >&2
   npm install --include=dev
 fi
 
 npm run build
-
-# Normalize output directory for both Vercel root modes.
-# - If root is repo: expose ./dist at repo root.
-# - If root is frontend: frontend/dist already maps to ./dist.
-cd "$REPO_ROOT"
-rm -rf dist
-cp -R frontend/dist dist
-
-echo "[deploy] normalized output directory: $REPO_ROOT/dist"
-ls -la dist
-
-# Optional visibility when started from a non-root CWD.
-cd "$START_DIR"
