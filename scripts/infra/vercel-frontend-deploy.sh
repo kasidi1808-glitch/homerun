@@ -3,12 +3,13 @@ set -euo pipefail
 set -x
 
 echo "[deploy] start"
+START_DIR="$(pwd)"
 pwd
 ls -la
 
 # Detect app directory from common Vercel root-directory modes:
-# - repo root      => ./frontend/package.json
 # - frontend root  => ./package.json + ./src
+# - repo root      => ./frontend/package.json
 # - backend root   => ../frontend/package.json
 if [[ -f package.json && -d src ]]; then
   APP_DIR="."
@@ -22,7 +23,8 @@ else
 fi
 
 cd "$APP_DIR"
-echo "[deploy] app dir: $(pwd)"
+APP_ABS_DIR="$(pwd)"
+echo "[deploy] app dir: $APP_ABS_DIR"
 ls -la
 
 if [[ -f package-lock.json ]]; then
@@ -32,3 +34,11 @@ else
 fi
 
 npm run build
+
+# Ensure Vercel outputDirectory=dist is present at invocation root.
+if [[ "$START_DIR" != "$APP_ABS_DIR" ]]; then
+  rm -rf "$START_DIR/dist"
+  cp -R "$APP_ABS_DIR/dist" "$START_DIR/dist"
+  echo "[deploy] copied build output to $START_DIR/dist"
+  ls -la "$START_DIR/dist"
+fi
