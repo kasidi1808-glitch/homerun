@@ -201,7 +201,7 @@ If you want the React frontend hosted on Vercel and want deployment cards to app
 8. For real-time websocket data, set `VITE_WS_BASE_URL` to your backend websocket origin (for example `wss://api.yourdomain.com`).
 9. Install/authorize the **Vercel for GitHub** app so PR preview comments/checks are posted.
 
-If you hit `npm ERR! enoent ... /backend/package.json`, Vercel is running commands from the `backend` root directory. Keep using this repo `vercel.json`; the deploy script auto-detects `frontend` from repo-root, frontend-root, or backend-root and runs install/build in the correct folder.
+If deployment gets **Canceled** on Vercel, remove any old project-level command overrides and keep Root Directory set to `frontend` so Vercel runs only `npm install` + `npm run build` in the frontend app.
 
 Expected project layout:
 
