@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { normalizeUtcTimestampsInPlace } from '../lib/timestamps'
+import { WS_BASE_URL } from '../lib/runtimeEndpoints'
 
 interface WebSocketMessage {
   type: string
@@ -68,7 +69,13 @@ function sharedConnect(url: string) {
   }
 
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const wsUrl = url.startsWith('ws') ? url : `${protocol}//${window.location.host}${url}`
+  const wsBase = WS_BASE_URL
+  const normalizedPath = url.startsWith('/') ? url : `/${url}`
+  const wsUrl = url.startsWith('ws')
+    ? url
+    : wsBase
+      ? `${wsBase.replace(/\/$/, '')}${normalizedPath}`
+      : `${protocol}//${window.location.host}${normalizedPath}`
 
   try {
     const ws = new WebSocket(wsUrl)

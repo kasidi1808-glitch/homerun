@@ -187,6 +187,40 @@ docker compose up -d
 
 Pulls pre-built images from GHCR (`ghcr.io/braedonsaunders/homerun-backend` and `-frontend`). Add `--build` to build locally instead. The stack runs Postgres, Redis, the API, three worker planes, and the frontend behind nginx — Alembic migrations are applied automatically on first start. See [docker-compose.yml](./docker-compose.yml) and [.env.example](./.env.example) for details.
 
+### Deploy frontend on Vercel
+
+If you want the React frontend hosted on Vercel and want deployment cards to appear directly in GitHub PRs ("View deployment" + Vercel bot status table), use this setup:
+
+1. Import this repo into Vercel (Add New → Project).
+2. Set **Root Directory** to `frontend`.
+3. Set **Install Command** to `npm install`.
+4. Set **Build Command** to `npm run build`.
+5. Set **Output Directory** to `dist`.
+6. In Vercel Project Settings → Rewrites, proxy `/api/:path*` to your backend origin.
+7. Set `VITE_API_BASE_URL` to your backend API origin (for example `https://api.yourdomain.com/api`).
+8. For real-time websocket data, set `VITE_WS_BASE_URL` to your backend websocket origin (for example `wss://api.yourdomain.com`).
+9. Install/authorize the **Vercel for GitHub** app so PR preview comments/checks are posted.
+
+If deployment gets **Canceled** on Vercel, remove any old project-level command overrides and keep Root Directory set to `frontend` so Vercel runs only `npm install` + `npm run build` in the frontend app.
+
+Expected project layout:
+
+```text
+root/
+├── frontend/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── src/
+└── backend/
+```
+
+You can also trigger the first deploy manually:
+
+```bash
+# from repo root
+vercel
+```
+
 ### Prerequisites
 
 - Python 3.10+ (auto-installed if missing)
