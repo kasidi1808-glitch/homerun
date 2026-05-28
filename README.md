@@ -189,31 +189,16 @@ Pulls pre-built images from GHCR (`ghcr.io/braedonsaunders/homerun-backend` and 
 
 ### Deploy frontend on Vercel
 
-If you want the React frontend hosted on Vercel and want deployment cards to appear directly in GitHub PRs ("View deployment" + Vercel bot status table):
+If you want the React frontend hosted on Vercel and want deployment cards to appear directly in GitHub PRs ("View deployment" + Vercel bot status table), use this setup:
 
 1. Import this repo into Vercel (Add New → Project).
-2. In Vercel, connect the GitHub repository and enable Preview deployments for pull requests.
-3. Install/authorize the **Vercel for GitHub** app for the repo/org so Vercel can post PR comments and statuses.
-4. Keep root `vercel.json`, which calls `scripts/infra/vercel-frontend-deploy.sh`.
-5. In `vercel.json`, replace `https://YOUR_BACKEND_HOST` in the `/api/:path*` rewrite with your real backend origin.
+2. Set **Root Directory** to `frontend`.
+3. Set **Build Command** to `npm install && npm run build`.
+4. Set **Output Directory** to `dist`.
+5. In Vercel Project Settings → Rewrites, proxy `/api/:path*` to your backend origin.
+6. Install/authorize the **Vercel for GitHub** app so PR preview comments/checks are posted.
 
-Why previous deploys failed:
-- The old command assumed repo-root layout (`frontend/package-lock.json` + `cd frontend`).
-- If Vercel Root Directory was set to `frontend`, that path check failed and `cd frontend` failed, exiting with code 1.
-
-The deploy script now supports both layouts:
-- repo root containing `frontend/`
-- frontend as the current root directory
-
-The Vercel config runs install and build as separate steps, so build output appears under Vercel's **Build Logs** instead of being hidden inside install logs.
-
-Lockfile policy:
-- If `package-lock.json` exists, script uses `npm ci --include=dev` (deterministic).
-- If missing, script uses `npm install --include=dev` to regenerate lockfile, then future deploys should use `npm ci`.
-
-If you still see `Command "cd frontend && npm ci && npm run build" exited with 1`, remove old Build/Install command overrides in Vercel Project Settings so Vercel uses repository `vercel.json`.
-
-If you see `Command "bash scripts/infra/vercel-frontend-deploy.sh" exited with 127`, your Vercel Root Directory is likely set to `frontend` while the script path is evaluated from that folder. This repo now supports both roots, but older project-level command overrides can still force the broken path; clear them in Vercel Project Settings.
+This avoids repo-root path issues (`cd frontend` / script-path mismatches) because Vercel runs directly inside the frontend project.
 
 You can also trigger the first deploy manually:
 
