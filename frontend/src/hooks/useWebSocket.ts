@@ -68,7 +68,13 @@ function sharedConnect(url: string) {
   }
 
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const wsUrl = url.startsWith('ws') ? url : `${protocol}//${window.location.host}${url}`
+  const wsBase = (import.meta.env.VITE_WS_BASE_URL as string | undefined)?.trim()
+  const normalizedPath = url.startsWith('/') ? url : `/${url}`
+  const wsUrl = url.startsWith('ws')
+    ? url
+    : wsBase
+      ? `${wsBase.replace(/\/$/, '')}${normalizedPath}`
+      : `${protocol}//${window.location.host}${normalizedPath}`
 
   try {
     const ws = new WebSocket(wsUrl)

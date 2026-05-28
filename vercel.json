@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo \"install handled by deploy script\"",
+  "buildCommand": "bash scripts/infra/vercel-frontend-deploy.sh || bash ../scripts/infra/vercel-frontend-deploy.sh",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://YOUR_BACKEND_HOST/:path*"
+    }
+  ]
+}
